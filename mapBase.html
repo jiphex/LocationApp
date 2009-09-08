@@ -13,79 +13,96 @@
 	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script type="text/javascript" charset="utf-8">
-      var map;
-      var lastPos;
-	  var yourPosMarker;
-    
-      function initialize() {
-        var latlng = new google.maps.LatLng(0,0);
-        var myOptions = {
-          zoom: 13,
-          center: latlng,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          disableDefaultUI: true,
-          navigationControl: true,
-          navigationControlOptions: {
-            style: google.maps.NavigationControlStyle.SMALL
-          }
-        };
-        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-        showInitialWelcome();
-      }
-      
-      function showInitialWelcome() {
-        var markerloc = new google.maps.LatLng(0,0)
-        var iwDiv = document.createElement('div');
-        iwDiv.setAttribute('class', 'infoPopup')
-        iwDiv.innerHTML = "Press Get Location!"
-        var infoWindow = new google.maps.InfoWindow({
-          content: iwDiv
-        });
-        var marker = new google.maps.Marker({
-          position: markerloc,
-          map: map,
-          title: "Press \"Get Location\""
-        });
-        infoWindow.open(map, marker)
-      }
-      
-      function displayMapForCoords(lat, lng, acc) {
-        coordsLoc = new google.maps.LatLng(lat,lng);
-        lastPos = coordsLoc;
-		if(!yourPosMarker) {
-			yourPosMarker = new google.maps.Marker({
-			  position: coordsLoc,
-			  map: map,
-			  title: "Your Location"
-			});
-			map.panTo(coordsLoc)
-		} else {
-			yourPosMarker.set_position(coordsLoc);
-		}
-        return true;
-      }
-      
-      function redisplayMap() {
-        map.panTo(lastPos)
-      }
+        var map;
+        var lastPos;
+        var yourPosMarker;
+        var geocoder;
+
+        function initialize() {
+            var latlng = new google.maps.LatLng(0,0);
+            var myOptions = {
+                zoom: 13,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                disableDefaultUI: true,
+                navigationControl: true,
+                navigationControlOptions: {
+                    style: google.maps.NavigationControlStyle.SMALL
+                }
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+            geocoder = new google.maps.GeoCoder();
+            showInitialWelcome();
+        }
+
+        function showInitialWelcome() {
+            var markerloc = new google.maps.LatLng(0,0)
+            var iwDiv = document.createElement('div');
+            iwDiv.setAttribute('class', 'infoPopup')
+            iwDiv.innerHTML = "Press Get Location!"
+            var infoWindow = new google.maps.InfoWindow({
+              content: iwDiv
+            });
+            var marker = new google.maps.Marker({
+              position: markerloc,
+              map: map,
+              title: "Press \"Get Location\""
+            });
+            infoWindow.open(map, marker)
+        }
+
+        function displayMapForCoords(lat, lng, acc) {
+            coordsLoc = new google.maps.LatLng(lat,lng);
+            lastPos = coordsLoc;
+            if(!yourPosMarker) {
+            	yourPosMarker = new google.maps.Marker({
+            	  position: coordsLoc,
+            	  map: map,
+            	  title: "Your Location"
+            	});
+            	map.panTo(coordsLoc)
+            } else {
+            	yourPosMarker.set_position(coordsLoc);
+            }
+            logProblem("FOOBAR", "WEEMOO");
+            return true;
+        }
+
+        function geocodeLastPosition() {
+            if(geocoder){
+                geocoder.geocode({'latlng': lastPos}, function(results, status) {
+                    if(status == google.maps.GeocoderStatus.OK) {
+                        return results;
+                    } else {
+                        return false;
+                    }
+                })
+            } else {
+                return false;
+            }
+        }
+
+        function redisplayMap() {
+            map.panTo(lastPos)
+        }
     </script>
     <style>
-    body {
-      margin: 0px;
-    }
+        body {
+          margin: 0px;
+        }
     
-    .infoPopup {
-      font-family: "Lucida Grande"; 
-      font-weight: bold; 
-      margin: 0px;
-      padding: 0px;
-      text-align: center;
-      padding-top: 13px;
-      font-size:12pt
-    }
+        .infoPopup {
+          font-family: "Lucida Grande"; 
+          font-weight: bold; 
+          margin: 0px;
+          padding: 0px;
+          text-align: center;
+          padding-top: 13px;
+          font-size:12pt
+        }
     </style>
-  </head>
-  <body id="mapbase" onload="initialize()">
-    <div id="map_canvas" style="width:100%; height:100%"></div>
-  </body>
+    </head>
+    <body id="mapbase" onload="initialize()">
+        <div id="map_canvas" style="width:100%; height:100%"></div>
+    </body>
 </html>
