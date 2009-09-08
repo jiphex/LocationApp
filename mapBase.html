@@ -31,7 +31,6 @@
                 }
             };
             map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-            geocoder = new google.maps.GeoCoder();
             showInitialWelcome();
         }
 
@@ -64,7 +63,6 @@
             } else {
             	yourPosMarker.set_position(coordsLoc);
             }
-            logProblem("FOOBAR", "WEEMOO");
             return true;
         }
 
